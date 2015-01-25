@@ -42,13 +42,13 @@ class Canvas extends Widget
 	 */
 	public function getApi()
 	{
-		return Yii::$app->getComponent(self::$componentId);
+		return Yii::$app->get(self::$componentId);
 	}
     
   public function init(){
       Event::on(View::className(), View::EVENT_AFTER_RENDER, function ($event) {
           if(!$this->isRendered){
-            Yii::$app->getComponent('yandexMapsApi')->render();
+            $this->getApi()->render();
             $this->isRendered = true;
           }
       });        
