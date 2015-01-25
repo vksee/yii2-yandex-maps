@@ -6,12 +6,15 @@
 namespace mirocow\yandexmaps\objects;
 
 use mirocow\yandexmaps\GeoObject;
+use yii\helpers\ArrayHelper;
 
 /**
  * Placemark
  */
 class Placemark extends GeoObject
 {
+	private $type = 'Point';
+
 	/**
 	 * @param array $geometry
 	 * @param array $properties
@@ -19,25 +22,11 @@ class Placemark extends GeoObject
 	 */
 	public function __construct(array $geometry, array $properties = array(), array $options = array())
 	{
-		$feature = array(
-			'geometry' => array(
-				'type' => "Point",
-				'coordinates' => $geometry,
-			),
+		$feature = [
+			'geometry'   => $geometry,
 			'properties' => $properties,
-		);
+		];
 		parent::__construct($feature, $options);
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getGeometry()
-	{
-		$geometry = parent::getGeometry();
-		if (isset($geometry['coordinates'])) {
-			$geometry = $geometry['coordinates'];
-		}
-		return $geometry;
-	}
 }

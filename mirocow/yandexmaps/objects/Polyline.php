@@ -12,6 +12,8 @@ use mirocow\yandexmaps\GeoObject;
  */
 class Polyline extends GeoObject
 {
+	private $type = 'LineString';
+
 	/**
 	 * @param array $geometry
 	 * @param array $properties
@@ -19,25 +21,11 @@ class Polyline extends GeoObject
 	 */
 	public function __construct(array $geometry, array $properties = array(), array $options = array())
 	{
-		$feature = array(
-			'geometry' => array(
-				'type' => "LineString",
-				'coordinates' => $geometry,
-			),
+		$feature = [
+			'geometry'   => $geometry,
 			'properties' => $properties,
-		);
+		];
 		parent::__construct($feature, $options);
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getGeometry()
-	{
-		$geometry = parent::getGeometry();
-		if (isset($geometry['coordinates'])) {
-			$geometry = $geometry['coordinates'];
-		}
-		return $geometry;
-	}
 }

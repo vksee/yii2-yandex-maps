@@ -28,7 +28,7 @@ class Api extends Component
   public $uri = 'api-maps.yandex.ru';
   
   /** @var string */
-  public $api_version = '2.0-stable';
+  public $api_version = '2.1';
     
 	/** @var string */
 	public $language = 'ru-RU';
@@ -108,8 +108,14 @@ class Api extends Component
 
 	public function generateObject($object, $var = null)
 	{
-		$class = get_class($object);
-		$generator = 'generate' . substr($class, strrpos($class, '\\') + 1);
+		if($object instanceof Interfaces\GeoObject )
+		{
+			$generator = 'generateGeoObject';
+		} else {
+			$class = get_class($object);
+			$generator = 'generate' . substr($class, strrpos($class, '\\') + 1);
+		}
+
 		if (method_exists($this, $generator)) {
 			$var = is_numeric($var) ? null : $var;
 			$js = $this->$generator($object, $var);
@@ -241,41 +247,12 @@ class Api extends Component
 		return $js;
 	}
 
-	public function generatePlacemark(objects\Placemark $object, $var = null)
+	public function generateGeoObject(GeoObject $object, $var = null)
 	{
-		$geometry = Json::encode($object->geometry);
-		$properties = $this->encodeArray($object->properties);
-		$options = $this->encodeArray($object->options);
+		$feature    = $this->encodeArray($object->feature);
+		$options    = $this->encodeArray($object->options);
 
-		$js = "new ymaps.Placemark($geometry, $properties, $options)";
-		if (null !== $var) {
-			$js = "var $var = $js;\n";
-		}
-
-		return $js;
-	}
-
-	public function generatePolyline(objects\Polyline $object, $var = null)
-	{
-		$geometry = Json::encode($object->geometry);
-		$properties = $this->encodeArray($object->properties);
-		$options = $this->encodeArray($object->options);
-
-		$js = "new ymaps.Polyline($geometry, $properties, $options)";
-		if (null !== $var) {
-			$js = "var $var = $js;\n";
-		}
-
-		return $js;
-	}
-
-	public function generatePolygon(objects\Polygon $object, $var = null)
-	{
-		$geometry = Json::encode($object->geometry);
-		$properties = $this->encodeArray($object->properties);
-		$options = $this->encodeArray($object->options);
-
-		$js = "new ymaps.Polygon($geometry, $properties, $options)";
+		$js = "new ymaps.GeoObject($feature, $options)";
 		if (null !== $var) {
 			$js = "var $var = $js;\n";
 		}

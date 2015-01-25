@@ -6,12 +6,15 @@
 namespace mirocow\yandexmaps\objects;
 
 use mirocow\yandexmaps\GeoObject;
+use yii\helpers\ArrayHelper;
 
 /**
  * Polyline
  */
 class Polygon extends GeoObject
 {
+	private $type = 'Polygon';
+
 	/**
 	 * @param array $geometry
 	 * @param array $properties
@@ -19,13 +22,10 @@ class Polygon extends GeoObject
 	 */
 	public function __construct(array $geometry, array $properties = array(), array $options = array())
 	{
-		$feature = array(
-			'geometry' => array(
-				'type' => "Polygon",
-				'coordinates' => $geometry,
-			),
+		$feature = [
+			'geometry'   => $geometry,
 			'properties' => $properties,
-		);
+		];
 		parent::__construct($feature, $options);
 	}
 
@@ -35,10 +35,8 @@ class Polygon extends GeoObject
 	public function getGeometry()
 	{
 		$geometry = parent::getGeometry();
-		if (isset($geometry['coordinates'])) {
-			$geometry = $geometry['coordinates'];
-		}
-        
+		$coordinates = $geometry['coordinates'];
+
         $content = '';
         
         if(is_array($geometry)){
@@ -52,8 +50,9 @@ class Polygon extends GeoObject
         } else {
             $content = $geometry;
         }
-        
-		return $content;
+
+		$geometry['coordinates'] = $content;
+		return $geometry;
 	}
         
 }

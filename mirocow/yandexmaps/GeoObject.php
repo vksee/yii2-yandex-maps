@@ -17,6 +17,8 @@ use yii\base\Exception;
  */
 class GeoObject extends JavaScript implements Interfaces\GeoObject, Interfaces\EventAggregate
 {
+	private $type = 'Point';
+
 	/** @var array */
 	private $_feature;
 	/** @var array */
@@ -31,6 +33,13 @@ class GeoObject extends JavaScript implements Interfaces\GeoObject, Interfaces\E
 	 */
 	public function __construct(array $feature, array $options = array())
 	{
+		if (!isset($feature['geometry']['coordinates'])) {
+			throw new Exception('Empty GeoObject coordinates.');
+		}
+		if (!isset($feature['geometry']['type'])) {
+			$feature['geometry']['type'] = $this->type;
+		}
+
 		if (isset($options['events'])) {
 			$this->setEvents($options['events']);
 			unset($options['events']);
@@ -72,7 +81,7 @@ class GeoObject extends JavaScript implements Interfaces\GeoObject, Interfaces\E
 	public function getFeature()
 	{
 		if (empty($this->_feature)) {
-			throw new Exception('Empty placemark geometry.');
+			throw new Exception('Empty placemark feature.');
 		}
 		return $this->_feature;
 	}
@@ -114,7 +123,7 @@ class GeoObject extends JavaScript implements Interfaces\GeoObject, Interfaces\E
 	 */
 	public function setGeometry(array $geometry)
 	{
-		$this->_feature['coordinates'] = $geometry;
+		$this->_feature['geometry'] = $geometry;
 	}
 
 	/**
